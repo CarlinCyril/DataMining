@@ -2,7 +2,9 @@
 title: "Lab1"
 author: "CarlinCyril"
 date: "15/02/2018"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -28,3 +30,43 @@ plot(pressure)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+**2**)
+
+
+
+**b**)
+if we take the formula of both predictors in replacing, we have :
+$$\begin{aligned}
+Y_{i} = 2 + 4X_{1,i} + \epsilon_{2,i} + \epsilon_{3,i} \\
+      =  2 + X_{2,i} + \epsilon_{1,i} + \epsilon_{3,i}
+\end{aligned}$$
+
+
+In theory, we should have for the first predictor $\beta_{0} = 2$ and $\beta_{1} = 4$ then for the second predictor $\beta_{0} = 2$ and $\beta_{2} = 1$. We realize the linear regression in R. 
+```{r}
+set.seed(3)
+n=10
+X1=rnorm(n)
+X2=3*X1+rnorm(n)
+Y=2+X1+X2+rnorm(n)
+predictor1 <- lm(Y~X1)
+predictor2 <- lm(Y~X2)
+b01=predictor1$coefficients[1]
+b1=predictor1$coefficients[2]
+b02=predictor2$coefficients[1]
+b2=predictor2$coefficients[2]
+summary(predictor1)
+summary(predictor2)
+list(beta0=b01,beta1=b1,beta0=b02,beta1=b2)
+
+
+```
+
+
+First of all, the two models have a good R-square so that seems to be good models.
+But, in the first model, the $\beta_{0}$ is enough far of the theory value and in the second model, it's the $\beta_{2}$.
+So, the predictors are not really good that's perhaps due to the sum of the different residuals terms. 
+
+
