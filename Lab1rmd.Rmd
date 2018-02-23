@@ -1,36 +1,54 @@
 ---
-title: "Lab1"
-author: "CarlinCyril"
-date: "15/02/2018"
-output:
-  pdf_document: default
-  html_document: default
+title: "Practical 1"
+author: "Blanco Romain, Carlin Cyril, Dong Stéphane"
+date: "02/26/2018"
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+## Exercise 1
 
-## R Markdown
+### Question 1
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+```{r}
+set.seed(0)
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+X <- matrix(nrow = 6000, ncol = 201)
+for (i in 1:6000) {
+  X[i,] = matrix(rnorm(201, mean = 0, sd = 1), nrow = 1, ncol = 201)
+}
 
-```{r cars}
-summary(cars)
+dataFrame <- data.frame(X)
 ```
 
-## Including Plots
+### Question 2
 
-You can also embed plots, for example:
+Let $y$ be the 1st variable : $$ y = \begin{pmatrix} x_{1,1} \\
+\vdots \\
+x_{n, 1}\end{pmatrix}$$\
+With the matrix $X$ defined in the previous question, we define 
+$$ X^{'} = \begin{pmatrix} 1 & x_{1,2} & \cdots & x_{1,p} \\ 
+1 & x_{2,2} & \cdots & x_{2,p} \\
+\vdots & \vdots & \ddots & \vdots \\
+1 & x_{n,2} & \cdots & x_{n,p} \end{pmatrix}$$\
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+We obtain : $\hat{\beta} = (X^{'T}X^{'})^{-1}X^{'T}y$.\
+The regression model is : $Y = X^{'}\hat{\beta} + \epsilon$, with $\epsilon = (\epsilon_1, ..., \epsilon_n)$.
+
+### Question 3
+
+```{r}
+
+y <- rnorm(6000, mean = 0, sd = 1)
+beta <- solve(t(X) %*% X) %*% t(X) %*% y
+xbeta <- X %*% beta
+reg <- lm(y~xbeta)
+summary(reg)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
-
+## Exercise 2
 
 **2**)
 
