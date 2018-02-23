@@ -15,27 +15,30 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 set.seed(0)
 
-X <- matrix(nrow = 6000, ncol = 201)
+A <- matrix(nrow = 6000, ncol = 201)
 for (i in 1:6000) {
-  X[i,] = matrix(rnorm(201, mean = 0, sd = 1), nrow = 1, ncol = 201)
+  A[i,] = matrix(rnorm(201, mean = 0, sd = 1), nrow = 1, ncol = 201)
 }
 
-dataFrame <- data.frame(X)
+dataFrame <- data.frame(A)
 ```
 
 ### Question 2
 
-Let $y$ be the 1st variable : $$ y = \begin{pmatrix} x_{1,1} \\
+Let $y$ be the 1st variable : $$ y = \begin{pmatrix} a_{1,1} \\
 \vdots \\
-x_{n, 1}\end{pmatrix}$$\
-With the matrix $X$ defined in the previous question, we define 
-$$ X^{'} = \begin{pmatrix} 1 & x_{1,2} & \cdots & x_{1,p} \\ 
-1 & x_{2,2} & \cdots & x_{2,p} \\
+a_{n, 1}\end{pmatrix}$$\
+We define, 
+$$ X = \begin{pmatrix} 1 & a_{1,2} & \cdots & a_{1,p} \\ 
+1 & a_{2,2} & \cdots & a_{2,p} \\
 \vdots & \vdots & \ddots & \vdots \\
-1 & x_{n,2} & \cdots & x_{n,p} \end{pmatrix}$$\
+1 & a_{n,2} & \cdots & a_{n,p} \end{pmatrix}$$\
 
-We obtain : $\hat{\beta} = (X^{'T}X^{'})^{-1}X^{'T}y$.\
-The regression model is : $Y = X^{'}\hat{\beta} + \epsilon$, with $\epsilon = (\epsilon_1, ..., \epsilon_n)$.
+We obtain : $\hat{\beta} = (X^{T}X)^{-1}X^{T}y$.\
+The regression model is : $Y = X\hat{\beta} + \epsilon$, with $\epsilon = (\epsilon_1, ..., \epsilon_n)$.\
+\
+The true regression model is : $Y = X\hat{\beta}$.\
+It is realized only if the output is exactly a linear function of the dependant variables (no residual).
 
 ### Question 3
 
