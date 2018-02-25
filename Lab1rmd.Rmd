@@ -62,18 +62,20 @@ for (i in 1:n) {
 }
 # Store it into a data frame
 D <- data.frame(variables=X)
-# Create the design matrix and compute to get the coefficients
+# Create the design matrix
 MatX <- cbind(1, X[,2:p])
 y <- D$variables.1
-beta <- solve(t(MatX) %*% MatX) %*% t(MatX) %*% y
+# Simulate the linear regression model, get the betas and the epsilons
+fit <- lm(y ~ MatX)
+beta <- summary(fit)$coef[,"Estimate"]
+epsilon <- fit$residuals
 ```
-The linear model is thus : $$ y = MatX \times \hat\beta$$ with $\hat\beta$ calculated above (called "beta").\
+The linear model is thus : $$ y = MatX \times \hat\beta + \hat\epsilon$$ with $\hat\beta$ and $\hat\epsilon$ calculated above (called "beta" and "epsilon").\
 \
 Then, we compute the number of coefficients assessed as significantly non-zero at level 5% with the following code :\
 ```{r}
 # Compute the number of coefficients assessed as significantly non-zero at level 5%
 level <- 0.05
-fit <- lm(y ~ MatX)
 P_values <- summary(fit)$coef[,"Pr(>|t|)"]
 counter <- 0
 for (i in P_values) {
