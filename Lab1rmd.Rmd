@@ -13,43 +13,77 @@ knitr::opts_chunk$set(echo = TRUE)
 ### Question 1
 
 ```{r}
+# Define the parameters
+n <- 6000
+p <- 201
+# Set the seed to 0
 set.seed(0)
-
-A <- matrix(nrow = 6000, ncol = 201)
-for (i in 1:6000) {
-  A[i,] = matrix(rnorm(201, mean = 0, sd = 1), nrow = 1, ncol = 201)
+# Create the matrix for the Question 1
+X <- matrix(nrow = n, ncol = p)
+for (i in 1:n) {
+  X[i,] = matrix(rnorm(p, mean = 0, sd = 1), nrow = 1, ncol = p)
 }
-
-dataFrame <- data.frame(A)
+# Store it into a data frame
+D <- data.frame(variables=X)
 ```
 
 ### Question 2
 
-Let $y$ be the 1st variable : $$ y = \begin{pmatrix} a_{1,1} \\
+We use the matrix X defined in the previous question.\
+Let $y$ be the 1st variable : $$ y = \begin{pmatrix} x_{1,1} \\
 \vdots \\
-a_{n, 1}\end{pmatrix}$$\
+x_{n,1}\end{pmatrix}$$\
 We define, 
-$$ X = \begin{pmatrix} 1 & a_{1,2} & \cdots & a_{1,p} \\ 
-1 & a_{2,2} & \cdots & a_{2,p} \\
+$$ MatX = \begin{pmatrix} 1 & x_{1,2} & \cdots & x_{1,p} \\ 
+1 & x_{2,2} & \cdots & x_{2,p} \\
 \vdots & \vdots & \ddots & \vdots \\
-1 & a_{n,2} & \cdots & a_{n,p} \end{pmatrix}$$\
+1 & x_{n,2} & \cdots & x_{n,p} \end{pmatrix}$$\
 
-We obtain : $\hat{\beta} = (X^{T}X)^{-1}X^{T}y$.\
-The regression model is : $Y = X\hat{\beta} + \epsilon$, with $\epsilon = (\epsilon_1, ..., \epsilon_n)$.\
+We obtain : $\hat\beta = (MatX^{T}\ MatX)^{-1}\ MatX^{T}\ y$.\
+The linear model using the last 200 variables to predict the first one is : $y = X\hat\beta + \epsilon$, with $\epsilon = (\epsilon_1, ..., \epsilon_n)$.\
 \
-The true regression model is : $Y = X\hat{\beta}$.\
-It is realized only if the output is exactly a linear function of the dependant variables (no residual).
+The true regression model is : $y = f(X) + \epsilon$.\
+The difference is that for the true regression model, f can be a non-linear function depending on the data.\
+The linear regression model can be a possibility for the true regression model.
 
 ### Question 3
 
+We use the following code to get the coefficients ($\hat\beta$) : \
 ```{r}
-
-y <- rnorm(6000, mean = 0, sd = 1)
-beta <- solve(t(X) %*% X) %*% t(X) %*% y
-xbeta <- X %*% beta
-reg <- lm(y~xbeta)
-summary(reg)
+# Define the parameters
+n <- 6000
+p <- 201
+# Set the seed to 0
+set.seed(0)
+# Create the matrix for the Question 1
+X <- matrix(nrow = n, ncol = p)
+for (i in 1:n) {
+  X[i,] = matrix(rnorm(p, mean = 0, sd = 1), nrow = 1, ncol = p)
+}
+# Store it into a data frame
+D <- data.frame(variables=X)
+# Create the design matrix and compute to get the coefficients
+MatX <- cbind(1, X[,2:p])
+y <- D$variables.1
+beta <- solve(t(MatX) %*% MatX) %*% t(MatX) %*% y
 ```
+The linear model is thus : $$ y = MatX \times \hat\beta$$ with $\hat\beta$ calculated above (called "beta").\
+\
+Then, we compute the number of coefficients assessed as significantly non-zero at level 5% with the following code :\
+```{r}
+# Compute the number of coefficients assessed as significantly non-zero at level 5%
+level <- 0.05
+fit <- lm(y ~ MatX)
+P_values <- summary(fit)$coef[,"Pr(>|t|)"]
+counter <- 0
+for (i in P_values) {
+  if (i < level)
+    counter = counter + 1
+}
+sprintf("Number of coefficients assessed as significantly non-zero at level %d %% : %d out of %d", level * 100, counter, p)
+```
+We observe that only around 5.5% (11 out of 201) of the coefficients can be considered as non-zero at level 5%.\
+That result is not very surprising because all of the variables are independant. The first variable should not be dependant on (almost) any of the other 200 variables. There are still some variables (close to 5% of them) that are assessed as significantly non-zero at level 5% but that is quite normal due to the 5% tolerance level that we have set.
 
 ## Exercise 2
 
