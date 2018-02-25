@@ -5,8 +5,7 @@ X2=3*X1+rnorm(n)
 Y=2+X1+X2+rnorm(n)
 predictor1 <- lm(Y~X1)
 predictor2 <- lm(Y~X2)
-X=X1+X2
-predictor <- lm(Y~X)
+predictor <- lm(Y~X1+X2)
 b01=predictor1$coefficients[1]
 b11=predictor1$coefficients[2]
 b02=predictor2$coefficients[1]
