@@ -155,6 +155,30 @@ This could be explained by the fact that the two predictor variables $X_1$ and $
 
 ### Question d
 
+```{r}
+ordo1 <- c()
+ordo2 <- c()
+for (i in 1:100) {
+  X1 <- rnorm(n, mean = 0, sd = 1)
+  X2 <- 3 * X1 + rnorm(n, mean = 0, sd = 1)
+  Y <- 2 + X1 + X2 + rnorm(n, mean = 0, sd = 1)
+  fit4 <- lm(Y ~ X1 + X2)
+  beta4 <- summary(fit4)$coef[,"Estimate"]
+  ordo1 <- cbind(ordo1, beta4[2])
+  ordo2 <- cbind(ordo2, beta4[3])
+}
+par(mfrow=c(1,2))
+quant <- quantile(ordo1, probs = c(0.025, 0.975))
+plot(density(ordo1), main = "PDF of beta1 given X1")
+abline(v=quant[1], col="red")
+abline(v=quant[2], col="red")
+quant <- quantile(ordo2, probs = c(0.025, 0.975))
+plot(density(ordo2), main = "PDF of beta2 given X2")
+abline(v=quant[1], col="red")
+abline(v=quant[2], col="red")
+```
+\
+We observe that the two pdf are close to the pdf of a normal distribution $N(0,1)$.
 
 ### Question e
 
