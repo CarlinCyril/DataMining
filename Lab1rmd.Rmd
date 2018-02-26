@@ -104,7 +104,7 @@ Y <- 2 + X1 + X2 + rnorm(n, mean = 0, sd = 1)
 plot(X1, X2, main = "Cloud of points (X1, X2)")
 ```
 \
-The cloud of points $(X_{1,i}, X_{2,i})_i$ is very close to a straight line because $X_2$ is defined as a linear  function of $X_1$. Also, as \epsilon has a normal distribution between 0 and 1, it explains the width of 1.
+The cloud of points $(X_{1,i}, X_{2,i})_i$ is very close to a straight line because $X_2$ is defined as a linear  function of $X_1$. Also, as $\epsilon$ has a normal distribution between 0 and 1, it explains the width of 1.
 
 ### Question b
 ```{r}
