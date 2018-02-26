@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 ## Exercise 1
 
-### Question 1
+### Question a
 
 ```{r}
 # Define the parameters
@@ -29,7 +29,7 @@ for (i in 1:n) {
 D <- data.frame(variables=X)
 ```
 
-### Question 2
+### Question b
 
 We use the matrix X defined in the previous question.\
 Let $y$ be the 1st variable : $$ y = \begin{pmatrix} x_{1,1} \\
@@ -48,7 +48,7 @@ The true regression model is : $y = f(X) + \epsilon$.\
 The difference is that for the true regression model, f can be a non-linear function depending on the data.\
 The linear regression model can be a possibility for the true regression model.
 
-### Question 3
+### Question c
 
 We use the following code to get the coefficients ($\hat\beta$) : \
 ```{r}
@@ -89,8 +89,9 @@ sprintf("Number of coefficients assessed as significantly non-zero at level %d %
 We observe that only around 5.5% (11 out of 201) of the coefficients can be considered as non-zero at level 5%.\
 That result is not very surprising because all of the variables are independant. The first variable should not be dependant on (almost) any of the other 200 variables. There are still some variables (close to 5% of them) that are assessed as significantly non-zero at level 5% but that is quite normal due to the 5% tolerance level that we have set.
 
-## Exercise
-### Question 1
+## Exercise 2
+
+### Question a
 ```{r}
 # Set the seed to 3 and define parameter n
 set.seed(3)
@@ -103,7 +104,7 @@ Y <- 2 + X1 + X2 + rnorm(n, mean = 0, sd = 1)
 plot(X1, X2)
 ```
 \
-The cloud of points $(X_{1,i}, x_{2,i})_i$ is very close to a straight line because $X_2$ is defined as a linear  function of $X_1$.
+The cloud of points $(X_{1,i}, X_{2,i})_i$ is very close to a straight line because $X_2$ is defined as a linear  function of $X_1$.
 
 ### Question b
 ```{r}
@@ -125,8 +126,8 @@ summary(fit1)
 summary(fit2)
 ```
 \
-For both models, the two predictors can be assessed as non-zero at level 1% (thanks to their p-value). It is thus reasonable to state that, for each model, the two predictors are necessary to describe the model.
-Furthermore, each model has a very low p-value (around $10^{-5}$) which supports the previous statements.
+First of all, the two models have good R-squares so the linear model seems to be a good choice.\
+For both models, the two predictors ($\hat\beta_0$ and $\hat\beta_1$ for the first ; $\hat\beta_0$ and $\hat\beta_2$ for the second) can be assessed as non-zero at level 1% (thanks to their p-value). It is thus reasonable to state that, for each model, the two predictors are necessary to describe the model.
 
 ### Question c
 ```{r}
@@ -146,74 +147,16 @@ summary(fit3)
 \
 By looking at the p-values, we can say that, as opposed to $\hat\beta_1$ and $\hat\beta_2$, $\hat\beta_0$ can be assessed as non-zero at level 5 %.\
 That is different from before. Indeed, in the previous question, we tried to explain $Y$ with $X_1$ and $X_2$ separetely and the results were quite different : both $\hat\beta_1$ and $\hat\beta_2$ could be assessed as non-zero at level 5%.\
-Also, their estimates were almost two times higher ($\hat\beta_1 = 4.0861$ and $\hat\beta_2 = 1.4239$) comparing to their estimates of this model where we try to explain $Y$ with $X_1$ and $X_2$ at the same time ($\hat\beta_1 = 2.0628$ and $\hat\beta_2 = 0.7336$).\
+Also, their estimates were almost two times higher ($\hat\beta_1 = 4.0861$ and $\hat\beta_2 = 1.4239$) than with this model where we try to explain $Y$ with $X_1$ and $X_2$ at the same time ($\hat\beta_1 = 2.0628$ and $\hat\beta_2 = 0.7336$).\
 Only the estimates of $\hat\beta_0$ are consistent (1.3733 and 1.7662 separately ; 1.5812 together).\
 \
 This could be explained by the fact that the two predictor variables $X_1$ and $X_2$ are correlated ($X_2$ is indeed defined using $X_1$).\
 
+
 ### Question d
 
 
-## Exercise 2
-
-**2**)
-
-
-
-**b**)
-if we take the formula of both predictors in replacing, we have :
-$$\begin{aligned}
-Y_{i} = 2 + 4X_{1,i} + \epsilon_{2,i} + \epsilon_{3,i} \\
-      =  2 + X_{2,i} + \epsilon_{1,i} + \epsilon_{3,i}
-\end{aligned}$$
-
-
-In theory, we should have for the first predictor $\beta_{0} = 2$ and $\beta_{1} = 4$ then for the second predictor $\beta_{0} = 2$ and $\beta_{2} = 1$. We realize the linear regression in R. 
-```{r}
-set.seed(3)
-n=10
-X1=rnorm(n)
-X2=3*X1+rnorm(n)
-Y=2+X1+X2+rnorm(n)
-predictor1 <- lm(Y~X1)
-predictor2 <- lm(Y~X2)
-b01=predictor1$coefficients[1]
-b1=predictor1$coefficients[2]
-b02=predictor2$coefficients[1]
-b2=predictor2$coefficients[2]
-summary(predictor1)
-summary(predictor2)
-list(beta0=b01,beta1=b1,beta0=b02,beta1=b2)
-
-
-```
-
-
-First of all, the two models have a good R-square so that seems to be good models.
-But, in the first model, the $\beta_{0}$ is enough far of the theory value and in the second model, it's the $\beta_{2}$.
-So, the predictors are not really good that's perhaps due to the sum of the different residuals terms. 
-
-**c**) 
-
-
-```{r}
-set.seed(3)
-n=10
-X1=rnorm(n)
-X2=3*X1+rnorm(n)
-Y=2+X1+X2+rnorm(n)
-predictor <- lm(Y~X1+X2)
-summary(predictor)
-```
-
-
-There are two points of views : 
--According to the F-test the both predictors X1 and X2 have effects on Y because the p-value is small.
--But according to the two T-tests, X1 has no effect and X2 too. Because, it not differentiates the two because of the sum perhaps.
-
-
-**e**)
-
+### Question e
 
 ```{r}
 set.seed(3)
