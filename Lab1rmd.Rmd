@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Question a
 
-```{r}
+```{r, echo=FALSE}
 # Define the parameters
 n <- 6000
 p <- 201
@@ -51,7 +51,7 @@ The linear regression model can be a possibility for the true regression model.
 ### Question c
 
 We use the following code to get the coefficients ($\hat\beta$) : \
-```{r}
+```{r, echo=FALSE}
 # Define the parameters
 n <- 6000
 p <- 201
@@ -75,7 +75,7 @@ epsilon <- fit$residuals
 The linear model is thus : $$ y = MatX \times \hat\beta + \hat\epsilon$$ with $\hat\beta$ and $\hat\epsilon$ calculated above (called "beta" and "epsilon").\
 \
 Then, we compute the number of coefficients assessed as significantly non-zero at level 5% with the following code :\
-```{r}
+```{r, echo=FALSE}
 # Compute the number of coefficients assessed as significantly non-zero at level 5%
 level <- 0.05
 P_values <- summary(fit)$coef[,"Pr(>|t|)"]
@@ -92,7 +92,7 @@ That result is not very surprising because all of the variables are independant.
 ## Exercise 2
 
 ### Question a
-```{r}
+```{r, echo=FALSE}
 # Set the seed to 3 and define parameter n
 set.seed(3)
 n <- 1000
@@ -107,7 +107,7 @@ plot(X1, X2, main = "Cloud of points (X1, X2)")
 The cloud of points $(X_{1,i}, X_{2,i})_i$ is very close to a straight line because $X_2$ is defined as a linear  function of $X_1$. Also, as \epsilon has a normal distribution between 0 and 1, it explains the width of 1.
 
 ### Question b
-```{r}
+```{r, echo=FALSE}
 # Set the seed to 3 and define parameter n
 set.seed(3)
 n <- 10
@@ -130,7 +130,7 @@ First of all, the two models have good R-squares so the linear model seems to be
 For both models, the two predictors ($\hat\beta_0$ and $\hat\beta_1$ for the first ; $\hat\beta_0$ and $\hat\beta_2$ for the second) can be assessed as non-zero at level 1% (thanks to their p-value). It is thus reasonable to state that, for each model, the two predictors are necessary to describe the model.
 
 ### Question c
-```{r}
+```{r, echo=FALSE}
 # Set the seed to 3 and define parameter n
 set.seed(3)
 n <- 10
@@ -155,7 +155,7 @@ This could be explained by the fact that the two predictor variables $X_1$ and $
 
 ### Question d
 
-```{r}
+```{r, echo=FALSE}
 ordo1 <- c()
 ordo2 <- c()
 for (i in 1:100) {
@@ -182,7 +182,7 @@ We observe that the two pdf are close to the pdf of a normal distribution $N(0,1
 
 ### Question e
 
-```{r}
+```{r, echo=FALSE}
 set.seed(3)
 n=10
 X1=rnorm(n)
