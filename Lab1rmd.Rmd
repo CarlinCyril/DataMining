@@ -75,7 +75,7 @@ epsilon <- fit$residuals
 The linear model is thus : $$ y = MatX \times \hat\beta + \hat\epsilon$$ with $\hat\beta$ and $\hat\epsilon$ calculated above (called "beta" and "epsilon").\
 \
 Then, we compute the number of coefficients assessed as significantly non-zero at level 5% with the following code :\
-```{r, echo=FALSE}
+```{r}
 # Compute the number of coefficients assessed as significantly non-zero at level 5%
 level <- 0.05
 P_values <- summary(fit)$coef[,"Pr(>|t|)"]
