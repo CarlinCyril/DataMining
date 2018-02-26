@@ -89,6 +89,71 @@ sprintf("Number of coefficients assessed as significantly non-zero at level %d %
 We observe that only around 5.5% (11 out of 201) of the coefficients can be considered as non-zero at level 5%.\
 That result is not very surprising because all of the variables are independant. The first variable should not be dependant on (almost) any of the other 200 variables. There are still some variables (close to 5% of them) that are assessed as significantly non-zero at level 5% but that is quite normal due to the 5% tolerance level that we have set.
 
+## Exercise
+### Question 1
+```{r}
+# Set the seed to 3 and define parameter n
+set.seed(3)
+n <- 1000
+# Create data
+X1 <- rnorm(n, mean = 0, sd = 1)
+X2 <- 3 * X1 + rnorm(n, mean = 0, sd = 1)
+Y <- 2 + X1 + X2 + rnorm(n, mean = 0, sd = 1)
+# plot the cloud of points
+plot(X1, X2)
+```
+\
+The cloud of points $(X_{1,i}, x_{2,i})_i$ is very close to a straight line because $X_2$ is defined as a linear  function of $X_1$.
+
+### Question b
+```{r}
+# Set the seed to 3 and define parameter n
+set.seed(3)
+n <- 10
+# Create data
+X1 <- rnorm(n, mean = 0, sd = 1)
+X2 <- 3 * X1 + rnorm(n, mean = 0, sd = 1)
+Y <- 2 + X1 + X2 + rnorm(n, mean = 0, sd = 1)
+# Estimate models
+fit1 <- lm(Y ~ X1)
+fit2 <- lm(Y ~ X2)
+beta1 <- summary(fit1)$coef[,"Estimate"]
+beta2 <- summary(fit2)$coef[,"Estimate"]
+epsilon1 <- fit1$residuals
+epsilon2 <- fit2$residuals
+summary(fit1)
+summary(fit2)
+```
+\
+For both models, the two predictors can be assessed as non-zero at level 1% (thanks to their p-value). It is thus reasonable to state that, for each model, the two predictors are necessary to describe the model.
+Furthermore, each model has a very low p-value (around $10^{-5}$) which supports the previous statements.
+
+### Question c
+```{r}
+# Set the seed to 3 and define parameter n
+set.seed(3)
+n <- 10
+# Create data
+X1 <- rnorm(n, mean = 0, sd = 1)
+X2 <- 3 * X1 + rnorm(n, mean = 0, sd = 1)
+Y <- 2 + X1 + X2 + rnorm(n, mean = 0, sd = 1)
+# Estimate model
+fit3 <- lm(Y ~ X1 + X2)
+beta3 <- summary(fit3)$coef[,"Estimate"]
+epsilon3 <- fit3$residuals
+summary(fit3)
+```
+\
+By looking at the p-values, we can say that, as opposed to $\hat\beta_1$ and $\hat\beta_2$, $\hat\beta_0$ can be assessed as non-zero at level 5 %.\
+That is different from before. Indeed, in the previous question, we tried to explain $Y$ with $X_1$ and $X_2$ separetely and the results were quite different : both $\hat\beta_1$ and $\hat\beta_2$ could be assessed as non-zero at level 5%.\
+Also, their estimates were almost two times higher ($\hat\beta_1 = 4.0861$ and $\hat\beta_2 = 1.4239$) comparing to their estimates of this model where we try to explain $Y$ with $X_1$ and $X_2$ at the same time ($\hat\beta_1 = 2.0628$ and $\hat\beta_2 = 0.7336$).\
+Only the estimates of $\hat\beta_0$ are consistent (1.3733 and 1.7662 separately ; 1.5812 together).\
+\
+This could be explained by the fact that the two predictor variables $X_1$ and $X_2$ are correlated ($X_2$ is indeed defined using $X_1$).\
+
+### Question d
+
+
 ## Exercise 2
 
 **2**)
