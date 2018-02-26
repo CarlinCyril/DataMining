@@ -101,7 +101,7 @@ X1 <- rnorm(n, mean = 0, sd = 1)
 X2 <- 3 * X1 + rnorm(n, mean = 0, sd = 1)
 Y <- 2 + X1 + X2 + rnorm(n, mean = 0, sd = 1)
 # plot the cloud of points
-plot(X1, X2)
+plot(X1, X2, main = "Cloud of points (X1, X2)")
 ```
 \
 The cloud of points $(X_{1,i}, X_{2,i})_i$ is very close to a straight line because $X_2$ is defined as a linear  function of $X_1$.
@@ -169,11 +169,11 @@ for (i in 1:100) {
 }
 par(mfrow=c(1,2))
 quant <- quantile(ordo1, probs = c(0.025, 0.975))
-plot(density(ordo1), main = "PDF of beta1 given X1")
+plot(density(ordo1), main = "PDF of beta1 given X1", xlab = "X1")
 abline(v=quant[1], col="red")
 abline(v=quant[2], col="red")
 quant <- quantile(ordo2, probs = c(0.025, 0.975))
-plot(density(ordo2), main = "PDF of beta2 given X2")
+plot(density(ordo2), main = "PDF of beta2 given X2", xlab = "X2")
 abline(v=quant[1], col="red")
 abline(v=quant[2], col="red")
 ```
