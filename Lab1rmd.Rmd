@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Question a
 
-```{r, echo=FALSE}
+```{r}
 # Define the parameters
 n <- 6000
 p <- 201
@@ -51,7 +51,7 @@ The linear regression model can be a possibility for the true regression model.
 ### Question c
 
 We use the following code to get the coefficients ($\hat\beta$) : \
-```{r, echo=FALSE}
+```{r}
 # Define the parameters
 n <- 6000
 p <- 201
