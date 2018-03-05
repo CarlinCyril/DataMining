@@ -1,5 +1,5 @@
 ---
-title: "Practical 2"
+title: "Lab 2"
 author: "Blanco Romain, Carlin Cyril, Dong Stéphane"
 date: ""
 output:
@@ -9,4 +9,12 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+#1
+
+The script locates each person of the NAm2.txt file and represents them with points on a map thanks to their coordinates (longitude and latitude) along with a legend explaining what each point (person) is.
+Each person is given a color and a representation (dot, square triangle).
+
+#2
+
 
