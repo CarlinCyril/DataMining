@@ -70,11 +70,13 @@ The linear regression model doesn't work because t-values and p-value aren't cal
 
 The PCA is a method which transforms correlated variables in uncorrelated variables. These new variables are called principal components. That allows to synthesize the information and eliminate the useless information. 
 
+The PCA method is designed to reduce dimensionality of a given sample. We want to reduce the dimensionality because most of the methods we have are statistical and so their efficiency is directly related to the dimensionality. We can reduce dimensionality when we have redundance among our attributes (correlated dimensions), useless attributes or not enough data to fully represents all dimensions. PCA's goal is representing instances with fewer variables and trying to preserve data's structure (that affects class separability) as much as possible at the same time. It does that by operating a feature extraction : this method contructs a new set of dimensions linearly combining the dimensions of the original set. This combination is done such as the created axes have the greatest variances. Afterward, the dataset is projected onto this new set of dimensions and have fewer attributes. Thus, regular methods can be more easily applied.
 
 
 ## b)
 ```{r}
-pcaNAm2 <- prcomp(NAm2[,9:length(NAm2)])
+geneticData <- NAm2[,-c(1:8)]
+pcaNAm2 <- prcomp(geneticData)
 ```
 Since the datas are all ones and zeros (same unit), we do not need to use the argument scale of prcomp.
 
@@ -91,19 +93,82 @@ legend("bottomleft",legend=names,col=colPalette,lty=- 1,pch=pch,cex=.5,ncol=3,lw
 \
 The graph represents the influence that some genetic markers have on the populations.\
 A lot of populations are very close to each other.\
-However, some of them are quite distinguishable, for example :\ 
-Axes 1 and 2 : Ache and Surui\
-Axes 5 and 6 : Pima and Karitiana\
+However, some of them are quite distinguishable, for example :\\ 
+Axes 1 and 2 : Ache and Surui\\
+Axes 5 and 6 : Pima and Karitiana\\
 
 
 ## d)
 The first 2 principal components capture 3.568 % of the variance ("summary(pcaNAm2)").\
 In order to represent genetic markers efficiently using a minimal number of principal components, we need the components to have at least a cumulative proportion of the variance of around 60-70 %.\
 With the results that we have, we would choose to keep the first 200 principal components (68.217%).\
-
+Note : this result confirms our observation in question c. Indeed the graph 1 we ploted with the first 2 principal components as axes can barely make 2 populations distinguishable and this is now understandable as their cumulative proportion of the variance is only 3.5%.
 
 ## 4 PCR
 
 
 ## a)
+
+```{r}
+PCAaxes <- as.data.frame(pcaNAm2$x[,1:250])
+LatVector <- NAm2$lat
+lmlat <- lm(LatVector~., data = PCAaxes)
+LongVector <- NAm2$long
+lmlong <- lm(LongVector~.,data=PCAaxes)
+
+plot(lmlong$fitted.values,lmlat$fitted.values,col="white", asp=1)
+for (i in 1:npop) {
+  lines(lmlong$fitted.values[which(NAm2[,3]==names[i])],lmlat$fitted.values[which(NAm2[,3]==names[i])],type="p",col=colPalette[i],pch=pch[i])
+}
+legend("bottomleft",legend=names,col=colPalette,lty=- 1,pch=pch,cex=.50,ncol=3,lwd=2)
+map("world",add=T)
+```
+
+We can immediately note that the precision is lower than at the question 1 (obviously). The markers for a given population are no longer piled up at the same spot but more or less, according to the given population, spread on the map.
+
+## b)
+
+```{r}
+library("fields")
+u = matrix((lmlong$fitted.values), ncol=1)
+u = cbind(u, matrix(lmlat$fitted.values, ncol = 1))
+v = matrix(NAm2$long, ncol = 1)
+v = cbind(v, matrix(NAm2$lat, ncol = 1))
+error <- diag(rdist.earth(u,v))
+summary(error)
+```
+The mean error of our regression is approximatively 400km, which is quite imprecise. Although we reach a precision of 21.95km, we also have an error of 1540km on one point. Perhaps taking more PCA axes would improve the precision.
+
+## 5. PCR and cross-validation
+## a)
+
+## b)
+```{r}
+library("caret")
+l <- length(NAm2$IndivID)
+labels=rep(1:10,each=50, length.out = l)
+set=sample(labels,l)
+
+# b steps
+plot(1, type="n", xlab="Number of components", ylab="Error", 
+     xlim=c(0, 500), ylim=c(0, 10000))
+j = 0
+errorPCR = matrix(nrow= length(seq(2,440, by=10)), ncol = l)
+
+for(naxes in seq(2,440, by=10)) {
+  pcalong=data.frame(cbind(long=NAm2[,c("long")],pcaNAm2$x[,1:naxes]))
+  pcalat=data.frame(cbind(long=NAm2[,c("lat")],pcaNAm2$x[,1:naxes]))
+  j = j+1
+  predictCoord = matrix(ncol = 2, nrow = l, 
+                         dimnames = list(c(),c("longitude", "latitude")))
+  for(i in 1:10) {
+    fitlong = lm(long~., data = pcalong, subset = which(set != i))
+    fitlat = lm(lat~., data = pcalong, subset = which(set != i))
+    predictCoord[which(set==i),"longitude"] = predict(fitlong, pcalong[which(set == i),])
+    predictCoord[which(set==i),"latitude"] = predict(fitlat, pcalat[which(set==i),])
+  }
+  errorPCR[j,]<- diag(rdist.earth(predictCoord,v))
+  points(naxes,mean(errorPCR[j,]))
+}
+```
 
