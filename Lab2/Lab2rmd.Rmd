@@ -141,17 +141,20 @@ The mean error of our regression is approximatively 400km, which is quite imprec
 
 ## 5. PCR and cross-validation
 ## a)
+The danger with having one training set and one test set is that our model has captured the noise from our training set and becomes biased. The obtained model could work on our test set, it would not be reliable for it is likely the model is overfitting. Subsequently, the accuracy of our model would be really poor on a new set of explicative variables. To counter this effect, the cross-validation method split our set in several subset of variables that will be used to create a training set, a validation set and a test set.\\
+Here we will use the K-fold cross validation method that consists in splitting our original set in K parts and make combinations among them to create different test and training sets. Computing the average error gives us the average coefficients for our model and so the likelihood of overfitting is lowered.
 
 ## b)
 ```{r}
 library("caret")
+library("fields")
 l <- length(NAm2$IndivID)
 labels=rep(1:10,each=50, length.out = l)
 set=sample(labels,l)
 
 # b steps
 plot(1, type="n", xlab="Number of components", ylab="Error", 
-     xlim=c(0, 500), ylim=c(0, 10000))
+     xlim=c(0, 500), ylim=c(0, 1500))
 j = 0
 errorPCR = matrix(nrow= length(seq(2,440, by=10)), ncol = l)
 
@@ -163,7 +166,7 @@ for(naxes in seq(2,440, by=10)) {
                          dimnames = list(c(),c("longitude", "latitude")))
   for(i in 1:10) {
     fitlong = lm(long~., data = pcalong, subset = which(set != i))
-    fitlat = lm(lat~., data = pcalong, subset = which(set != i))
+    fitlat = lm(lat~., data = pcalat, subset = which(set != i))
     predictCoord[which(set==i),"longitude"] = predict(fitlong, pcalong[which(set == i),])
     predictCoord[which(set==i),"latitude"] = predict(fitlat, pcalat[which(set==i),])
   }
