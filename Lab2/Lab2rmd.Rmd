@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## 1 Data :
 
-```{r}
+```{r, warning=FALSE}
 NAm2 = read.table("NAm2.txt", header = TRUE)
 names=unique(NAm2$Pop)
 npop=length(names)
@@ -82,13 +82,23 @@ Since the datas are all ones and zeros (same unit), we do not need to use the ar
 
 
 ## c)
-```{r}
-caxes=c(1,2) # c(5,6) for the 5th and 6th axes
+```{r, echo=FALSE}
+# Axes 1 and 2
+caxes=c(1,2) 
 plot(pcaNAm2$x[,caxes],col="white")
 for (i in 1:npop) {
   lines(pcaNAm2$x[which(NAm2[,3]==names[i]),caxes], type="p",col=colPalette[i],pch=pch[i])
 }
 legend("bottomleft",legend=names,col=colPalette,lty=- 1,pch=pch,cex=.5,ncol=3,lwd=2)
+
+# Axes 5 and 6
+caxes=c(5,6) 
+plot(pcaNAm2$x[,caxes],col="white")
+for (i in 1:npop) {
+  lines(pcaNAm2$x[which(NAm2[,3]==names[i]),caxes],
+        type="p",col=colPalette[i],pch=pch[i])
+}
+legend("top",legend=names,col=colPalette,lty=- 1,pch=pch,cex=.75,ncol=3,lwd=2)
 ```
 \
 The graph represents the influence that some genetic markers have on the populations.
@@ -116,7 +126,7 @@ lmlat <- lm(LatVector~., data = PCAaxes)
 LongVector <- NAm2$long
 lmlong <- lm(LongVector~.,data=PCAaxes)
 
-plot(lmlong$fitted.values,lmlat$fitted.values,col="white", asp=1)
+plot(lmlong$fitted.values,lmlat$fitted.values,col="white", asp=1, xlab="Longitude", ylab="Latitude")
 for (i in 1:npop) {
   lines(lmlong$fitted.values[which(NAm2[,3]==names[i])],lmlat$fitted.values[which(NAm2[,3]==names[i])],type="p",col=colPalette[i],pch=pch[i])
 }
@@ -153,7 +163,7 @@ labels=rep(1:10,each=50, length.out = l)
 set=sample(labels,l)
 
 # b steps
-plot(1, type="n", xlab="Number of components", ylab="Error", 
+plot(1, type="n", xlab="Number of components", ylab="Mean Prediction Error (km)", 
      xlim=c(0, 500), ylim=c(0, 2000))
 j = 0
 errorPCR = matrix(nrow= length(seq(2,440, by=10)), ncol = l)
@@ -187,7 +197,7 @@ lmlat <- lm(LatVector~., data = PCAaxes)
 LongVector <- NAm2$long
 lmlong <- lm(LongVector~.,data=PCAaxes)
 
-plot(lmlong$fitted.values,lmlat$fitted.values,col="white", asp=1)
+plot(lmlong$fitted.values,lmlat$fitted.values,col="white", asp=1, xlab = "Longitude", ylab = "Latitude")
 for (i in 1:npop) {
   lines(lmlong$fitted.values[which(NAm2[,3]==names[i])],lmlat$fitted.values[which(NAm2[,3]==names[i])],type="p",col=colPalette[i],pch=pch[i])
 }
