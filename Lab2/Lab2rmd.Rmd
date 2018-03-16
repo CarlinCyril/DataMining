@@ -205,7 +205,7 @@ error <- diag(rdist.earth(u,v))
 summary(error)
 ```
 
-There are points into the water and the error is bigger than the training model. It is finally a worse choice.
+There are points in the water and the error is bigger than the training model. However we are more certain the model's predictive ability will not depend on the dataset as we avoid overfitting predictions through the PCR method.
 
 # 6)
 
@@ -234,7 +234,7 @@ Our final pipeline to predict the geographical coordinates of populations based 
 
 Our model's efficiency can be characterized using the following metrics:
 
-* Mean prediction accuracy in km: 1080.728.
+* Mean prediction accuracy in km: 567.90.
 
 Finally, there are mutliple ways our model could be improved:
 
@@ -242,4 +242,4 @@ Finally, there are mutliple ways our model could be improved:
 
 * Since our populations only have one value to characterize their location, we could see this learning problem as a classification problem and use a different machine learning algorithm to get better results.
 
-* Following the same idea as the first point, if we had a circle of possibiliy instead of a center point, the linear regression would give better results since it wouldn't predict our those centers.
+* Following the same idea as the first point, if we had a circle of possibiliy instead of a center point, the linear regression would give better results since it wouldn't predict those centers.
