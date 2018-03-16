@@ -70,7 +70,7 @@ The linear regression model doesn't work because t-values and p-value aren't cal
 
 The PCA is a method which transforms correlated variables in uncorrelated variables. These new variables are called principal components. That allows to synthesize the information and eliminate the useless information. 
 
-The PCA method is designed to reduce dimensionality of a given sample. We want to reduce the dimensionality because most of the methods we have are statistical and so their efficiency is directly related to the dimensionality. We can reduce dimensionality when we have redundance among our attributes (correlated dimensions), useless attributes or not enough data to fully represents all dimensions. PCA's goal is representing instances with fewer variables and trying to preserve data's structure (that affects class separability) as much as possible at the same time. It does that by operating a feature extraction : this method contructs a new set of dimensions linearly combining the dimensions of the original set. This combination is done such as the created axes have the greatest variances. Afterward, the dataset is projected onto this new set of dimensions and have fewer attributes. Thus, regular methods can be more easily applied.
+The PCA method is designed to reduce dimensionality of a given sample. We want to reduce the dimensionality because most of the methods we have are statistical and so their efficiency is directly related to the dimensionality. We can reduce dimensionality when we have redundance among our attributes (correlated dimensions), useless attributes or not enough data to fully represents all dimensions. PCA's goal is representing instances with fewer variables and trying to preserve data's structure (that affects class separability) as much as possible at the same time. It does that by operating a feature extraction : this method constructs a new set of dimensions linearly combining the dimensions of the original set. This combination is done such as the created axes have the greatest variances. Afterward, the dataset is projected onto this new set of dimensions and have fewer attributes. Thus, regular methods can be more easily applied.
 
 
 ## b)
@@ -144,7 +144,7 @@ The mean error of our regression is approximatively 400km, which is quite imprec
 The danger with having one training set and one test set is that our model has captured the noise from our training set and becomes biased. The obtained model could work on our test set, it would not be reliable for it is likely the model is overfitting. Subsequently, the accuracy of our model would be really poor on a new set of explicative variables. To counter this effect, the cross-validation method split our set in several subset of variables that will be used to create a training set, a validation set and a test set.   
 Here we will use the K-fold cross validation method that consists in splitting our original set in K parts and make combinations among them to create different test and training sets. Computing the average error gives us the average coefficients for our model and so the likelihood of overfitting is lowered.
 
-## b)
+## b) and c)
 ```{r,warning=FALSE,message=FALSE}
 library("caret")
 library("fields")
@@ -174,6 +174,38 @@ for(naxes in seq(2,440, by=10)) {
   points(naxes,mean(errorPCR[j,]))
 }
 ```
+
+
+
+## d)
+We keep the model with 73 components because on the graph above it's the number of components which minimizes the error according to the cross validation. 
+
+```{r}
+PCAaxes <- as.data.frame(pcaNAm2$x[,1:73])
+LatVector <- NAm2$lat
+lmlat <- lm(LatVector~., data = PCAaxes)
+LongVector <- NAm2$long
+lmlong <- lm(LongVector~.,data=PCAaxes)
+
+plot(lmlong$fitted.values,lmlat$fitted.values,col="white", asp=1)
+for (i in 1:npop) {
+  lines(lmlong$fitted.values[which(NAm2[,3]==names[i])],lmlat$fitted.values[which(NAm2[,3]==names[i])],type="p",col=colPalette[i],pch=pch[i])
+}
+legend("bottomleft",legend=names,col=colPalette,lty=- 1,pch=pch,cex=.50,ncol=3,lwd=2)
+map("world",add=T)
+```
+
+```{r}
+library("fields")
+u = matrix((lmlong$fitted.values), ncol=1)
+u = cbind(u, matrix(lmlat$fitted.values, ncol = 1))
+v = matrix(NAm2$long, ncol = 1)
+v = cbind(v, matrix(NAm2$lat, ncol = 1))
+error <- diag(rdist.earth(u,v))
+summary(error)
+```
+
+There are points into the water and the error is bigger than the training model. It is finally a worse choice.
 
 # 6)
 
