@@ -190,7 +190,7 @@ for(naxes in seq(2,440, by=10)) {
 ## d)
 We keep the model with 73 components because on the graph above it's the number of components which minimizes the error according to the cross validation. 
 
-```{r}
+```{r, echo=FALSE}
 PCAaxes <- as.data.frame(pcaNAm2$x[,1:73])
 LatVector <- NAm2$lat
 lmlat <- lm(LatVector~., data = PCAaxes)
@@ -205,7 +205,7 @@ legend("bottomleft",legend=names,col=colPalette,lty=- 1,pch=pch,cex=.50,ncol=3,l
 map("world",add=T)
 ```
 
-```{r}
+```{r, echo=FALSE}
 library("fields")
 u = matrix((lmlong$fitted.values), ncol=1)
 u = cbind(u, matrix(lmlat$fitted.values, ncol = 1))
