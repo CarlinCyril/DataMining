@@ -79,4 +79,17 @@ legend("topleft",paste(1:3),col=mycol,lwd=2,cex=2)
 
 ### Question e
 
+```{r}
+missclass<-function(x) {
+  errorMean = 0;
+  for(i in 1:length(x[1,]))
+    for(j in 1:length((x[,1])))
+      if(i != j)
+        errorMean = errorMean + x[i,j]
+  errorMean = errorMean/sum(x)
+  print(errorMean)
+}
+missclass(confMatrix)
+```
+
 ### Question f
