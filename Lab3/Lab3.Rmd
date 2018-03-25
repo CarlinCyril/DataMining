@@ -40,6 +40,7 @@ labels <-rep (1: 2, each=494/2); set = sample(labels, 494)
 ldaModel <- lda(contID~., NAcont[1:1000,], subset=which(set==1))
 ```
 
+The LDA doesn't work because the intra-group covariance matrix is not inversible.
 
 ### Question b
 
@@ -56,6 +57,9 @@ summary(fit)
 
 
 ```
+
+
+Only 3128 markers on 5709 have not a null variance. It's almost the half which have influence to determine the continents. 
 
 ### Question c
 
@@ -76,6 +80,9 @@ mycol<-c("black","grey40","lightgrey")
 barplot(t(confMatrix),col=mycol)
 legend("topleft",paste(1:3),col=mycol,lwd=2,cex=2)
 ```
+
+
+The barplot shows the succes rate of our prediction. As regards the North America, the confusion is big because the three colors are present. The reason could be the fact that the sample is small. As regards the Central America, there is a confusion between two continents the Central and the South America. Finally, the South America is well predicted by the model.
 
 ### Question e
 
