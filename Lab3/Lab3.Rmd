@@ -1,7 +1,7 @@
 ---
 title: "Lab3"
 author: "Blanco Romain, Carlin Cyril, Dong Stéphane"
-date: "02/26/2018"
+date: "03/27/2018"
 output:
   html_document: default
   pdf_document: default
@@ -40,26 +40,25 @@ labels <-rep (1: 2, each=494/2); set = sample(labels, 494)
 ldaModel <- lda(contID~., NAcont[1:1000,], subset=which(set==1))
 ```
 
-The LDA doesn't work because the intra-group covariance matrix is not inversible.
+Actually, R could not solve the matrix inverse because the within-class covariance matrix was singular thus the LDA doesn't work. That is why the lda function throw an error saying some variables appear to be constant within groups.
 
 ### Question b
 
-```{r}
+```{r, warning=FALSE, echo=FALSE}
 # We remove markers that have a null variance
 withinvar<-apply(NAcont[(set==1),-1],FUN=
                    function(x){tapply(x,NAcont[(set==1),1],FUN=var)},MARGIN=2)
 bool<-as.logical(apply(withinvar,FUN=function(x){prod(x!=0)},MARGIN=2))
 NAcont2<-cbind(contID=contID,(NAm2[,-(1:8)])[,bool])
 NAcont2[,1]<-factor(NAcont[,1])
-length(NAcont2) # 3128 remaining markers
+cat(length(NAcont2), " markers on 5709 have not a null variance.")
+```
+It is slightly more than half of our dataset. This means this latter may not be suitable for the LDA method. 
+
+```{r, warning=FALSE}
 fit <- lda(contID~., NAcont2, subset = which(set==1))
 summary(fit)
-
-
 ```
-
-
-Only 3128 markers on 5709 have not a null variance. It's almost the half which have influence to determine the continents. 
 
 ### Question c
 
@@ -98,8 +97,11 @@ missclass<-function(x) {
 }
 missclass(confMatrix)
 ```
+Around one third of the test set is missclassified. The model is clearly not accurate enough and needs to be improved. 
 
 ### Question f
+
+As done in the previous Lab, we are going to operate a cross-validation method to improve the accuracy of our model and avoid overfitting results.
 
 ```{r,warning=FALSE}
 # Operating a cross-validation with LDA method
@@ -124,3 +126,4 @@ legend("topleft",paste(1:3),col=mycol,lwd=2,cex=2)
 # Rate of missclassified individuals
 missclass(confMatrix2)
 ```
+We can see we have improved our model for it is more accurate (about twice less), and the cross-validation method insure we don't have an overfitting model. The rate of missclassification can still be improved and we may consider another method than the LDA one.
