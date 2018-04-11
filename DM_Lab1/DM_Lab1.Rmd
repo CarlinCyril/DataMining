@@ -1,0 +1,227 @@
+---
+title: "Document Classification with Generative Naive-Bayes Models"
+author: "Blanco Romain, Carlin Cyril, Dong Stéphane"
+date: "11/04/2018"
+output: pdf_document
+---
+
+## Overall Aim
+
+### 1)
+
+The program parses the data line per line (document per document) and extracts the needed information such as the class and the index-value vector of each document.\
+The extracted information is stored in a sparse matrix.\
+Also, the size of the vocabulary used is printed.
+
+
+### 2)
+
+```{python engine.path="/usr/local/bin/python3", eval=FALSE}
+print("Vocabulary size : ", end="")
+print(vocab_size)
+
+for nb in range(1, max(all_lab)+1):
+    print("Nb of doc in class " + str(nb) + ": " + str(all_lab.count(nb)))
+```
+
+```{python echo=FALSE, engine.path="/usr/local/bin/python3"}
+import numpy as np
+from sklearn.naive_bayes import BernoulliNB, MultinomialNB
+from sklearn.model_selection import train_test_split, StratifiedKFold
+from scipy import sparse
+
+f = open("BaseReuters-29")
+
+all_lab = []
+row = []
+column = []
+freq = []
+doc_size = 0
+
+for line in f:  # Takes each line (document))
+    doc_size += 1
+    l = line.split()  # Takes every component of the document
+    all_lab.append(int(l[0]))  # Put the class of the doc in all_lab
+    for i in range(1, len(l)):  # for every component of the vector
+        feat = l[i].split(":")  # separate index and value
+        row.append(doc_size-1)  # current row
+        column.append(int(feat[0]))  # process the index
+        freq.append(int(feat[1]))  # process the value (at the index)
+vocab_size = np.max(column)  # max index whose value is not 0
+max_class = np.max(row)  # nb of lines
+
+reuters = sparse.csr_matrix((freq, (row, column)),
+                            shape=(doc_size, vocab_size+1))
+                            
+print("Vocabulary size : ", end="")
+print(vocab_size)
+
+for nb in range(1, max(all_lab)+1):
+    print("Nb of doc in class " + str(nb) + ": " + str(all_lab.count(nb)))
+```
+
+
+### 3)
+
+```{python engine.path="/usr/local/bin/python3", eval=FALSE}
+x_train, x_test, y_train, y_test = train_test_split(reuters, all_lab, test_size=18203)
+```
+
+
+## Bernoulli vs. Multinomial distributions
+
+
+### 1)
+
+```{python engine.path="/usr/local/bin/python3", eval=FALSE}
+clf = BernoulliNB()
+clf.fit(x_train, y_train)
+```
+
+
+We did not preprocess the data because centering sparse data would destroy the sparseness structure in the data.\
+Laplace smoothing ensures that the model is able to consider an event that has been seen before but could be seen in the future.\
+
+
+### 2)
+
+```{python engine.path="/usr/local/bin/python3", eval=FALSE}
+clf = MultinomialNB()
+clf.fit(x_train, y_train)
+```
+
+
+### 3)
+
+```{python engine.path="/usr/local/bin/python3", eval=FALSE}
+clf = BernoulliNB()
+clf.fit(x_train, y_train)
+res = clf.score(x_test, y_test)
+print("BernoulliNB\nScore : %.2f %% (random : %.2f %%)" % (res * 100, 100.0/29.0))
+
+clf = MultinomialNB()
+clf.fit(x_train, y_train)
+res = clf.score(x_test, y_test)
+print("MultinomialNB\nScore : %.2f %% (random : %.2f %%)" % (res * 100, 100.0/29.0))
+```
+
+```{python echo=FALSE, engine.path="/usr/local/bin/python3"}
+import numpy as np
+from sklearn.naive_bayes import BernoulliNB, MultinomialNB
+from sklearn.model_selection import train_test_split, StratifiedKFold
+from scipy import sparse
+
+f = open("BaseReuters-29")
+
+all_lab = []
+row = []
+column = []
+freq = []
+doc_size = 0
+
+for line in f:  # Takes each line (document))
+    doc_size += 1
+    l = line.split()  # Takes every component of the document
+    all_lab.append(int(l[0]))  # Put the class of the doc in all_lab
+    for i in range(1, len(l)):  # for every component of the vector
+        feat = l[i].split(":")  # separate index and value
+        row.append(doc_size-1)  # current row
+        column.append(int(feat[0]))  # process the index
+        freq.append(int(feat[1]))  # process the value (at the index)
+vocab_size = np.max(column)  # max index whose value is not 0
+max_class = np.max(row)  # nb of lines
+
+reuters = sparse.csr_matrix((freq, (row, column)),
+                            shape=(doc_size, vocab_size+1))
+                  
+x_train, x_test, y_train, y_test = train_test_split(reuters, all_lab, test_size=18203)
+clf = BernoulliNB()
+clf.fit(x_train, y_train)
+res = clf.score(x_test, y_test)
+print("BernoulliNB\nScore : %.2f %% (random : %.2f %%)" % (res * 100, 100.0/29.0))
+
+clf = MultinomialNB()
+clf.fit(x_train, y_train)
+res = clf.score(x_test, y_test)
+print("\nMultinomialNB\nScore : %.2f %% (random : %.2f %%)" % (res * 100, 100.0/29.0))
+```
+\
+$$Accuracy = \frac{number\_of\_correctly\_predicted\_documents}{number\_of\_documents}$$
+
+### 4)
+
+```{python engine.path="/usr/local/bin/python3", eval=FALSE}
+skf = StratifiedKFold(n_splits=5, shuffle=True)
+j = 1
+average = 0.0
+for train_index, test_index in skf.split(reuters, all_lab):
+    x_train, x_test = reuters[train_index], reuters[test_index]
+    y_train, y_test = [all_lab[i] for i in train_index],\
+                      [all_lab[i] for i in test_index]
+    clf = MultinomialNB()
+    clf.fit(x_train, y_train)
+    res = clf.score(x_test, y_test)
+    average += res
+    print("\nMultinomialNB 5-Folds, Fold %d\nScore : %.2f %% (random : %.2f %%)"\
+          % (j, res * 100, 100.0/29.0))
+    j += 1
+average /= 5.0
+print("\nAverage score of 5-Folds cross-validation : %.2f %% (random : %.2f %%)"\
+      % (average * 100, 100.0/29.0))
+```
+
+```{python echo=FALSE, engine.path="/usr/local/bin/python3"}
+import numpy as np
+from sklearn.naive_bayes import BernoulliNB, MultinomialNB
+from sklearn.model_selection import train_test_split, StratifiedKFold
+from scipy import sparse
+
+f = open("BaseReuters-29")
+
+all_lab = []
+row = []
+column = []
+freq = []
+doc_size = 0
+
+for line in f:  # Takes each line (document))
+    doc_size += 1
+    l = line.split()  # Takes every component of the document
+    all_lab.append(int(l[0]))  # Put the class of the doc in all_lab
+    for i in range(1, len(l)):  # for every component of the vector
+        feat = l[i].split(":")  # separate index and value
+        row.append(doc_size-1)  # current row
+        column.append(int(feat[0]))  # process the index
+        freq.append(int(feat[1]))  # process the value (at the index)
+vocab_size = np.max(column)  # max index whose value is not 0
+max_class = np.max(row)  # nb of lines
+
+reuters = sparse.csr_matrix((freq, (row, column)),
+                            shape=(doc_size, vocab_size+1))
+                  
+skf = StratifiedKFold(n_splits=5, shuffle=True)
+j = 1
+average = 0.0
+for train_index, test_index in skf.split(reuters, all_lab):
+    x_train, x_test = reuters[train_index], reuters[test_index]
+    y_train, y_test = [all_lab[i] for i in train_index],\
+                      [all_lab[i] for i in test_index]
+    clf = BernoulliNB()
+    clf.fit(x_train, y_train)
+    res = clf.score(x_test, y_test)
+    average += res
+    print("\nMultinomialNB 5-Folds, Fold %d\nScore : %.2f %% (random : %.2f %%)"\
+          % (j, res * 100, 100.0/29.0))
+    j += 1
+average /= 5.0
+print("\nAverage score of 5-Folds cross-validation : %.2f %% (random : %.2f %%)"\
+      % (average * 100, 100.0/29.0))
+```
+\
+K-Folds cross-validation is based on splitting the data into k equally sized parts. One part is retained as the validation data and the others will be used to train the model. We repeat the process using a different subsample as validation data each time.\
+\
+For our classification problem, the multinomial model is way more effective than the Bernoulli model. Indeed, there is a 20 % difference in accuracy between the two.\
+By using the 5-Folds cross-validation with the multinomial model, the results are pretty much the same, which is expected.\
+As a matter of fact, since there is 70 703 documents in the dataset, a 5-Folds cross-validation would train the model on 56 562 documents and test it on 14 141.\
+This is not very far from the 52 500 training documents and 18 203 validation documents used previously (question 1 and 2).\
+Nevertheless, this reduces the risk for overfitting our model.

@@ -17,7 +17,6 @@ row = []
 column = []
 freq = []
 doc_size = 0
-
 for line in f:  # Takes each line (document))
     doc_size += 1
     l = line.split()  # Takes every component of the document
@@ -29,6 +28,7 @@ for line in f:  # Takes each line (document))
         freq.append(int(feat[1]))  # process the value (at the index)
 vocab_size = np.max(column)  # max index whose value is not 0
 max_class = np.max(row)  # nb of lines
+# print("Vocabulary size : ", end="")
 # print(vocab_size)
 
 reuters = sparse.csr_matrix((freq, (row, column)),
@@ -63,7 +63,7 @@ for train_index, test_index in skf.split(reuters, all_lab):
     x_train, x_test = reuters[train_index], reuters[test_index]
     y_train, y_test = [all_lab[i] for i in train_index],\
                       [all_lab[i] for i in test_index]
-    clf = BernoulliNB()
+    clf = MultinomialNB()
     clf.fit(x_train, y_train)
     res = clf.score(x_test, y_test)
     average += res
