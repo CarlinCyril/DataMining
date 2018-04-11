@@ -56,10 +56,20 @@ formulas : http://scikit-learn.org/stable/modules/naive_bayes.html
 """
 
 # 5 fold
-kf = StratifiedKFold(reuters, n_folds=5, shuffle=True)
-for train_index, test_index in kf:
+skf = StratifiedKFold(n_splits=5, shuffle=True)
+j = 1
+average = 0.0
+for train_index, test_index in skf.split(reuters, all_lab):
     x_train, x_test = reuters[train_index], reuters[test_index]
-    y_train, y_test = all_lab[train_index], all_lab[test_index]
+    y_train, y_test = [all_lab[i] for i in train_index],\
+                      [all_lab[i] for i in test_index]
     clf = BernoulliNB()
     clf.fit(x_train, y_train)
-    print(clf.score(x_test, y_test))
+    res = clf.score(x_test, y_test)
+    average += res
+    print("\nMultinomialNB 5-Folds, Fold %d\nScore : %.2f %% (random : %.2f %%)"\
+          % (j, res * 100, 100.0/29.0))
+    j += 1
+average /= 5.0
+print("\nAverage score of 5-Folds cross-validation : %.2f %% (random : %.2f %%)"\
+      % (average * 100, 100.0/29.0))
