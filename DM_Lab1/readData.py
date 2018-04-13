@@ -51,9 +51,6 @@ clf = MultinomialNB()
 clf.fit(x_train, y_train)
 res = clf.score(x_test, y_test)
 print("\nMultinomialNB\nScore : %.2f %% (random : %.2f %%)" % (res * 100, 100.0/29.0))
-"""
-formulas : http://scikit-learn.org/stable/modules/naive_bayes.html
-"""
 
 # 5 fold
 skf = StratifiedKFold(n_splits=5, shuffle=True)
