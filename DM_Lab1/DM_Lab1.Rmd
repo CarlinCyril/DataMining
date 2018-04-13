@@ -80,7 +80,7 @@ clf.fit(x_train, y_train)
 
 
 We did not preprocess the data because centering sparse data would destroy the sparseness structure in the data.\
-Laplace smoothing ensures that the model is able to consider an event that has been seen before but could be seen in the future.\
+Laplace smoothing ensures that the model is able to consider an event that has not been seen before but could be seen in the future.\
 
 
 ### 2)
@@ -206,7 +206,7 @@ for train_index, test_index in skf.split(reuters, all_lab):
     x_train, x_test = reuters[train_index], reuters[test_index]
     y_train, y_test = [all_lab[i] for i in train_index],\
                       [all_lab[i] for i in test_index]
-    clf = BernoulliNB()
+    clf = MultinomialNB()
     clf.fit(x_train, y_train)
     res = clf.score(x_test, y_test)
     average += res
